@@ -1,0 +1,28 @@
+version: 1.7.5.{build}
+pull_requests:
+  do_not_increment_build_number: true
+branches:
+  only:
+  - appveyor-test
+image: Visual Studio 2017
+shallow_clone: true
+install:
+- ps: Invoke-Expression "./bootstrap.ps1"
+build_script:
+- ps: ./build-scripts/full.ps1 -version $Env:APPVEYOR_BUILD_VERSION -dev ($Env:APPVEYOR_REPO_TAG -ne "true")
+test:
+  categories:
+    except:
+    - Web
+artifacts:
+- path: dev-builds/*/*
+  name: dev
+- path: builds/*/HDT-Installer.exe
+  name: prod-squirrel
+- path: builds/*/*.nupkg
+  name: prod-squirrel
+- path: builds/*/RELEASES
+  name: prod-squirrel
+- path: builds/*/*.zip
+  name: prod-portable
+deploy: off
